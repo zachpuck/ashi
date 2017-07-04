@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = (robot) => {
+module.exports = function(robot) {
     robot.hear(/pomodoro/, function(res) {
         res.send('time to start working!');
     });

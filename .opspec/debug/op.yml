@@ -1,0 +1,21 @@
+name: debug
+description: used to locally debug ashi
+inputs:
+  HUBOT_SLACK_TOKEN:
+    string:
+      constraints: { minLength: 1 }
+      description: ashitest slack token
+  srcDir:
+    dir:
+      default: .
+      description: directory containing the app
+run:
+  container:
+    name: ashitest
+    image: { ref: 'node:8.1.0-alpine' }
+    cmd: [ './bin/hubot', '-a', 'slack' ]
+    envVars:
+      HUBOT_SLACK_TOKEN:
+    dirs:
+      /src: srcDir
+    workDir: /src/    

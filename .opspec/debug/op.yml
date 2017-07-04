@@ -11,7 +11,7 @@ inputs:
       description: directory containing the app
 run:
   container:
-    name: ashitest
+    name: testbot
     image: { ref: 'node:8.1.0-alpine' }
     cmd: [ './bin/hubot', '-a', 'slack' ]
     envVars:

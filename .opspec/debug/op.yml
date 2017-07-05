@@ -12,7 +12,7 @@ inputs:
 run:
   container:
     name: testbot
-    image: { ref: 'node:8.1.0-alpine' }
+    image: { ref: 'node:8.1.0-slim"' }
     cmd: [ './bin/hubot', '-a', 'slack' ]
     envVars:
       HUBOT_SLACK_TOKEN:

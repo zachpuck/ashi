@@ -10,12 +10,17 @@ inputs:
       default: .
       description: directory containing the app
 run:
-  container:
-    name: testbot
-    image: { ref: 'node:8.1.0-slim"' }
-    cmd: [ './bin/hubot', '-a', 'slack' ]
-    envVars:
-      HUBOT_SLACK_TOKEN:
-    dirs:
-      /src: srcDir
-    workDir: /src/    
+  serial:
+    - op:
+        pkg: { ref: clean }
+        inputs: { srcDir }
+        outputs: { srcDir }
+    - container:
+        name: testbot
+        image: { ref: 'node:8.1.0-slim' }
+        cmd: [ './bin/hubot', '-a', 'slack' ]
+        envVars:
+          HUBOT_SLACK_TOKEN:
+        dirs:
+          /src: srcDir
+        workDir: /src/

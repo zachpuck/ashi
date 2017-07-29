@@ -1,3 +1,16 @@
+//  Description:
+//    Allow hubot to interact with StatusIO.
+// 
+//  Commands:
+//    hubot statusio - returns list of items being monitored.
+// 
+//  Configuration:
+//    statusIoStatusPageId - each status page has a unique Id
+//    statusIoApiId - API id found in statusIO settings
+//    statusIoApiKey - API key found in statusIO settings
+// 
+//  Notes:
+//    not a production ready solution
 'use strict';
 
 const request = require('request');

@@ -1,14 +1,14 @@
 'use strict';
 
+const request = require('request');
+
+const statusPageId = process.env.statusIoStatusPageId;
+const apiId = process.env.statusIoApiId
+const apiKey = process.env.statusIoApiKey
+
 module.exports = function(robot) {
     robot.hear(/statusio/, function(res) {
         res.send('checking statusio!');
-
-        let statusPageId = process.env.statusIoStatusPageId;
-        let apiId = process.env.statusIoApiId
-        let apiKey = process.env.statusIoApiKey        
-        
-        var request = require('request');
 
         request({
         method: 'GET',
@@ -18,9 +18,7 @@ module.exports = function(robot) {
             'x-api-id': apiId,
             'x-api-key': apiKey
         }}, function (error, response, body) {
-        // console.log('Status:', response.statusCode);
-        // console.log('Headers:', JSON.stringify(response.headers));
-        // console.log(JSON.parse(body).result.name);
+
             let monitoredItems = [];
             function getStatus(body) {
                 JSON.parse(body).result.forEach((item) => {
@@ -28,7 +26,6 @@ module.exports = function(robot) {
                 });
             }
             getStatus(body);
-            console.log(monitoredItems);
             res.send('currently monitoring: ' + monitoredItems);
         });
     });

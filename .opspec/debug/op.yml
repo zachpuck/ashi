@@ -5,6 +5,19 @@ inputs:
     string:
       constraints: { minLength: 1 }
       description: ashitest slack token
+  statusIoStatusPageId:
+    string:
+      constraints: { minLength: 1 }
+      description: status page id for statusio (each status page will have a unique id)
+  statusIoApiId:
+    string:
+      constraints: { minLength: 1 }
+      description: api id to access statusio
+  statusIoApiKey:
+    string:
+      constraints: { minLength: 1 }
+      description: api key to access statusio
+      isSecret: true
   srcDir:
     dir:
       default: .
@@ -21,6 +34,9 @@ run:
         cmd: [ './bin/hubot', '-a', 'slack' ]
         envVars:
           HUBOT_SLACK_TOKEN:
+          statusIoStatusPageId:
+          statusIoApiId:
+          statusIoApiKey:
         dirs:
           /src: srcDir
         workDir: /src/

@@ -2,7 +2,7 @@
 //    Allow hubot to interact with StatusIO.
 // 
 //  Commands:
-//    hubot statusio - returns list of items being monitored.
+//    hubot statusio get components - returns list of components being monitored.
 // 
 //  Configuration:
 //    statusIoStatusPageId - each status page has a unique Id
@@ -20,7 +20,7 @@ const apiId = process.env.statusIoApiId
 const apiKey = process.env.statusIoApiKey
 
 module.exports = function(robot) {
-    robot.hear(/statusio/, function(res) {
+    robot.hear(/statusio get components/, function(res) {
         res.send('checking statusio!');
 
         request({
@@ -42,6 +42,34 @@ module.exports = function(robot) {
             res.send('currently monitoring: ' + monitoredItems);
         });
     });
+
+    robot.hear(/statusio get status/, function(res){
+        res.send('checking status!');
+
+        request({
+        method: 'GET',
+        url: 'https://api.status.io/v2/status/summary/' + statusPageId,
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-id': apiId,
+            'x-api-key': apiKey
+        }}, function (error, response, body) {
+            // console.log('Status:', response.statusCode);
+            // console.log('Headers:', JSON.stringify(response.headers));
+            // console.log('Response:', body);
+            // overall_status = console.log(JSON.parse(body).result.status_overall.status)
+            
+            let statusResults = [];
+            function returnStatus(body) {
+                JSON.parse(body).result.status.forEach((item) => {
+                    statusResults.push(item.name + ': ' + item.status);
+                    
+                });
+            }
+            returnStatus(body);
+            res.send('Current Status: ' + statusResults);
+        });
+    })
 }
 
 

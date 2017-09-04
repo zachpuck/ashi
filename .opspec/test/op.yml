@@ -1,0 +1,25 @@
+name: test
+description: test
+inputs:
+  srcDir:
+    dir:
+      default: .
+      description: directory containing the projects source code
+  opts:
+    string:
+      default: -ffXd
+outputs:
+  srcDir:
+    dir:
+      description: directory containing the projects source code
+version: 1.0.0
+run:
+  container:
+    cmd:
+      - sh
+      - -ce
+      - pwd
+    dirs:
+      /src: srcDir
+    image: { ref: 'opspecpkgs/git.clean:1.0.0' }
+    workDir: /src

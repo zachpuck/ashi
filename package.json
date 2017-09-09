@@ -5,6 +5,7 @@
   "author": "zachpuck <zachpuckett@gmail.com>",
   "description": "a simple helper bot to take over the world",
   "dependencies": {
+    "coffee-script": "^1.12.7",
     "coffeescript": "^1.12.6",
     "hubot": "^2.19.0",
     "hubot-diagnostics": "0.0.2",

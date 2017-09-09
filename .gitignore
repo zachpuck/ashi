@@ -4,3 +4,5 @@ node_modules
 
 #opctl
 args.yml
+
+debug.sh

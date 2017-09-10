@@ -2,7 +2,7 @@
 //    Allow hubot to interact with StatusIO.
 // 
 //  Commands:
-//    hubot statusio get components - returns list of components being monitored.
+//    hubot statusio help - lists all commands available for StatusIO.
 // 
 //  Configuration:
 //    statusIoStatusPageId - each status page has a unique Id
@@ -11,6 +11,10 @@
 // 
 //  Notes:
 //    not a production ready solution
+//  
+//  References:
+//      http://docs.statusio.apiary.io
+//
 'use strict';
 
 const request = require('request');
@@ -20,8 +24,17 @@ const apiId = process.env.statusIoApiId
 const apiKey = process.env.statusIoApiKey
 
 module.exports = function(robot) {
-    robot.hear(/statusio get components/, function(res) {
-        res.send('checking statusio!');
+    robot.hear(/statusio help/, function(res) {
+        res.send(
+            'StatusIO commands: \n \
+            `statusio component list` - lists all components being monitored \n \
+            `statusio status summary` - checks current status \n \
+            `statusio incident list` - list all active incidents \n '
+        );
+    });
+
+    robot.hear(/statusio component list/, function(res) {
+        res.send('checking components!');
 
         request({
         method: 'GET',
@@ -43,7 +56,7 @@ module.exports = function(robot) {
         });
     });
 
-    robot.hear(/statusio get status/, function(res){
+    robot.hear(/statusio status summary/, function(res){
         res.send('checking status!');
 
         request({
@@ -53,12 +66,7 @@ module.exports = function(robot) {
             'Content-Type': 'application/json',
             'x-api-id': apiId,
             'x-api-key': apiKey
-        }}, function (error, response, body) {
-            // console.log('Status:', response.statusCode);
-            // console.log('Headers:', JSON.stringify(response.headers));
-            // console.log('Response:', body);
-            // overall_status = console.log(JSON.parse(body).result.status_overall.status)
-            
+        }}, function (error, response, body) {            
             let statusResults = [];
             function returnStatus(body) {
                 JSON.parse(body).result.status.forEach((item) => {
@@ -70,6 +78,33 @@ module.exports = function(robot) {
             res.send('Current Status: ' + statusResults);
         });
     })
+
+    robot.hear(/statusio incident list/, function(res){
+        res.send('Current incidents: \n');
+
+        request({
+        method: 'GET',
+        url: 'https://api.status.io/v2/incident/list/' + statusPageId,
+        headers: {
+            'Content-Type': 'application/json',
+            'x-api-id': apiId,
+            'x-api-key': apiKey
+        }}, function (error, response, body) {
+                        
+            let incidentResults = [];
+            function returnStatus(body) {
+                JSON.parse(body).result.active_incidents.forEach((item) => {
+                    
+                    let componentAffected = []                 
+                    item.components_affected.forEach((item) => {
+                        componentAffected.push(item.name);
+                    })
+                    incidentResults.push(componentAffected + ': ' + item.name);
+                    
+                });
+            }
+            returnStatus(body);
+            res.send('```' + incidentResults.join('\n') + '```');
+        });
+    })
 }
-
-

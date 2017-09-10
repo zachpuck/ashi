@@ -34,7 +34,7 @@ module.exports = function(robot) {
     });
 
     robot.hear(/statusio component list/, function(res) {
-        res.send('checking components!');
+        res.send('Component List: ');
 
         request({
         method: 'GET',
@@ -45,19 +45,19 @@ module.exports = function(robot) {
             'x-api-key': apiKey
         }}, function (error, response, body) {
 
-            let monitoredItems = [];
+            let componentResults = [];
             function getStatus(body) {
                 JSON.parse(body).result.forEach((item) => {
-                monitoredItems.push(item.name);
+                componentResults.push(item.name);
                 });
             }
             getStatus(body);
-            res.send('currently monitoring: ' + monitoredItems);
+            res.send('```' + componentResults.join('\n') + '```');
         });
     });
 
     robot.hear(/statusio status summary/, function(res){
-        res.send('checking status!');
+        res.send('Current Status: ');
 
         request({
         method: 'GET',
@@ -75,7 +75,7 @@ module.exports = function(robot) {
                 });
             }
             returnStatus(body);
-            res.send('Current Status: ' + statusResults);
+            res.send('```' + statusResults.join('\n') + '```');
         });
     })
 
@@ -90,7 +90,7 @@ module.exports = function(robot) {
             'x-api-id': apiId,
             'x-api-key': apiKey
         }}, function (error, response, body) {
-                        
+
             let incidentResults = [];
             function returnStatus(body) {
                 JSON.parse(body).result.active_incidents.forEach((item) => {

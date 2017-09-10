@@ -29,7 +29,8 @@ module.exports = function(robot) {
             'StatusIO commands: \n \
             `statusio component list` - lists all components being monitored \n \
             `statusio status summary` - checks current status \n \
-            `statusio incident list` - list all active incidents \n '
+            `statusio incident list` - list all active incidents \n \
+            `statusio incident create napcorner default` - create Partial Service Disruption for NapCorner \n '
         );
     });
 
@@ -44,7 +45,6 @@ module.exports = function(robot) {
             'x-api-id': apiId,
             'x-api-key': apiKey
         }}, function (error, response, body) {
-
             let componentResults = [];
             function getStatus(body) {
                 JSON.parse(body).result.forEach((item) => {
@@ -106,5 +106,48 @@ module.exports = function(robot) {
             returnStatus(body);
             res.send('```' + incidentResults.join('\n') + '```');
         });
+    })
+
+    robot.hear(/statusio incident create napcorner default/, function(res){
+        res.send('Creating incident: \n');
+
+
+        let incidentDetails = {
+            "statuspage_id": statusPageId,
+            "components": ["59b478166786d5aa05000765"],
+            "containers": ["59b478166786d5aa05000764"],
+            "incident_name": "Missing Boxes",
+            "incident_details": "Investigating reports of missing boxes",
+            "notify_email": "1",
+            "notify_sms": "0",
+            "notify_webhook": "1",
+            "social": "0",
+            "irc": "0",
+            "hipchat": "0",
+            "slack": "1",
+            "current_status": 400,
+            "current_state": 100,
+            "all_infrastructure_affected": "0"            
+        }
+
+        request({
+            method: 'POST',
+            url: 'https://api.status.io/v2/incident/create',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-id': apiId,
+                'x-api-key': apiKey
+            },
+            body: JSON.stringify(incidentDetails)}, function (error, response, body) {
+            
+            let resultDetails = JSON.parse(body).status
+            if(resultDetails.message === "OK" && resultDetails.error === "no") {
+                res.send('Default incident created')
+            } else {
+                res.send('Failed to create incident')
+            }
+
+        });
+
     })
 }

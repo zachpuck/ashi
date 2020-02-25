@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	lex "github.com/aws/aws-sdk-go/service/lexruntimeservice"
@@ -14,10 +17,11 @@ import (
 // LexProcessor has all the information for connecting with Lex
 type LexProcessor struct {
 	projectID string
-	authJSONFilePath string
+	accessKeyID string
+	secretAccessKey string
 	lang string
 	timeZone string
-	sessionClient *lex.LexRuntimeService
+	svc *lex.LexRuntimeService
 	ctx context.Context
 }
 
@@ -32,19 +36,29 @@ var lx LexProcessor
 
 func (lx *LexProcessor) init(a ...string) (err error) {
 	lx.projectID = a[0]
-	lx.authJSONFilePath = a[1]
-	lx.lang = a[2]
-	lx.timeZone = a[3]
+	lx.accessKeyID = a[1]
+	lx.secretAccessKey = a[2]
+	lx.lang = a[3]
+	lx.timeZone = a[4]
 
 	// Auth process: https://docs.aws.amazon.com/sdk-for-go/api/service/lexruntimeservice/#New
 
 	lx.ctx = context.Background()
-	cfg := &aws.Config{}
-	sessionClient := lex.New(cfg)
+	sess, err := session.NewSession(&aws.Config{
+		Credentials: credentials.NewStaticCredentials(lx.accessKeyID, lx.secretAccessKey, ""),
+	})
+	if err != nil {
+		log.Fatal("Error in session creation: ", err)
+	}
+	lx.svc = lex.New(sess)
 
 	return
 }
 
+func (lx *LexProcessor) processNLP(rawMessage string, username string) (r NLPResponse) {
+	sessionID := username
+	request := lex.
+}
 func main() {
 	http.HandleFunc("/", requestHandler)
 	fmt.Println("Started Listening...")

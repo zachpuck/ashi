@@ -8,6 +8,7 @@ Notes:
 1. Starter Tutorial: https://chatbotslife.com/golang-dialogflow-d32c4be5e124
 2. lex specific tutorial: https://chatbotslife.com/create-your-own-chatbot-by-using-amazon-lex-and-lambda-e45b716b8651
 3. lex go sdk: https://docs.aws.amazon.com/sdk-for-go/api/service/lexruntimeservice/
+4. another aws specific tutorial: https://chatbotsmagazine.com/quick-start-develop-a-chat-bot-with-aws-lex-lambda-part-1-b6f7c80ebba6
 
 [heroku]: http://www.heroku.com
 [hubot]: http://hubot.github.com

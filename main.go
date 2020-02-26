@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -56,8 +58,34 @@ func (lx *LexProcessor) init(a ...string) (err error) {
 }
 
 func (lx *LexProcessor) processNLP(rawMessage string, username string) (r NLPResponse) {
-	sessionID := username
-	request := lex.
+
+
+	input := []byte("What day is it?")
+
+	bytes.NewReader(input)
+
+	output, err := lx.svc.PostContent(&lex.PostContentInput{
+		//Accept:            aws.String("text/plain; charset=utf-8"),
+		BotAlias:          aws.String("ashibot"),
+		BotName:           aws.String("ashi"),
+		ContentType:       aws.String("text/plain; charset=utf-8"),
+		InputStream:       bytes.NewReader(input),
+		//RequestAttributes: nil,
+		//SessionAttributes: nil,
+		UserId:            aws.String(username),
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(output.Message)
+
+	r = NLPResponse{
+		Intent:     aws.StringValue(output.IntentName),
+		Confidence: 0,
+		Entities:   nil,
+	}
+	return r
 }
 func main() {
 	http.HandleFunc("/", requestHandler)
